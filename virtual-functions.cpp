@@ -182,3 +182,7 @@ int main() {
   GlobalRaiseEmployees(emp_arr_p, 4);
 }
 
+/* Read more
+https://www.geeksforgeeks.org/virtual-functions-and-runtime-polymorphism-in-cpp/
+https://www.geeksforgeeks.org/cpp-polymorphism/
+*/
