@@ -1,4 +1,3 @@
-#include <iostream>
 
 /* Some Intro
     * Imagine you have a base class and a derived class from the base class. A base class pointer can point to content with the type
@@ -30,52 +29,52 @@ To see another more practical example of how virtual functions can be useful see
 Specifically see this example in the above page: Real-Life Example to Understand the Implementation of Virtual Function
 
 Virtual functions allow us to create a list of base class pointers and "call methods of any of the derived classes" without even knowing the kind of derived class object. 
-
-
+Source: https://www.geeksforgeeks.org/virtual-function-cpp/
 */
 
-// Source: https://www.geeksforgeeks.org/virtual-function-cpp/
+// #include <iostream>
+// class Base {
+//     public:
+//     virtual void print() {
+//         std::cout << "print : base class definition called\n";
+//     }
 
-class Base {
-    public:
-    virtual void print() {
-        std::cout << "print : base class definition called\n";
-    }
+//     void show() {
+//         std::cout << "show : base class defintion called\n";
+//     }
+// };
 
-    void show() {
-        std::cout << "show : base class defintion called\n";
-    }
-};
+// class Derived : public Base {
+//     public:
+//     void print() {
+//         std::cout << "print : derived class definition called\n";
+//     }
 
-class Derived : public Base {
-    public:
-    void print() {
-        std::cout << "print : derived class definition called\n";
-    }
+//     void show() {
+//         std::cout << "show : derived class definition called\n";
+//     }
+// };
 
-    void show() {
-        std::cout << "show : derived class definition called\n";
-    }
-};
+// int main() {
+//     Base* b_ptr = new Base; // Base class pointer
+//     Derived d; // Derived class object
 
-int main() {
-    Base* b_ptr = new Base; // Base class pointer
-    Derived d; // Derived class object
+//     b_ptr->print(); // Runtime binding
+//     b_ptr->show(); // Compile binding
 
-    b_ptr->print(); // Runtime binding
-    b_ptr->show(); // Compile binding
+//     delete b_ptr;
+//     b_ptr = &d; // now b_ptr is pointing to a d object.
 
-    delete b_ptr;
-    b_ptr = &d; // now b_ptr is pointing to a d object.
+//     b_ptr->print(); // Runtime binding: b_ptr is pointing to a d object. As print is defined as virtual, it will be bounded at the runtime based on the current 
+//     // runtime type of the object that b_ptr is pointing to.
+//     b_ptr->show(); // Compile binding. At compilation time, the b_ptr is a Base pointer, so it will be binded to the base class version although at runtime 
+//     // bptr is pointing to a d type object.
+// }
 
-    b_ptr->print(); // Runtime binding: b_ptr is pointing to a d object. As print is defined as virtual, it will be bounded at the runtime based on the current 
-    // runtime type of the object that b_ptr is pointing to.
-    b_ptr->show(); // Compile binding. At compilation time, the b_ptr is a Base pointer, so it will be binded to the base class version although at runtime 
-    // bptr is pointing to a d type object.
-}
+/*
+Another example
+*/
 
-
-// Another example
 // #include <iostream>
 // using namespace std;
  
@@ -122,4 +121,64 @@ int main() {
  
 //     return 0;
 // }
+
+/*
+Practical Example: Imagin you have a app that manages the employee salaries. You want to raise the salaries of different employees. 
+You have a list of different employees (can be any object between employee (base class), manager, or engineer). You want to run different versions of RaiseSalary method 
+on these objects. 
+We cannot create an array/vector of different types. But we can create an array of pointers all with the base class type each pointing to an employee, manager, or engineer. 
+Using virtual functions we can run the version of RaiseSalary that matches the object type each pointer is pointing to. 
+*/ 
+
+#include <iostream>
+class Employee {
+ public:
+  Employee() {}
+  Employee(int salary) : salary_(salary) {}
+  virtual void RaiseSalary() {
+    salary_ += 0.1*salary_;
+  }
+
+  int salary_;
+ 
+};
+
+class Manager : public Employee {
+ public:
+  Manager(int salary) : Employee(salary) {}
+  void RaiseSalary() {
+    salary_ += 0.15*salary_;
+  }
+};
+
+class Engineer : public Employee {
+ public:
+  Engineer(int salary) : Employee(salary) {}
+  void RaiseSalary() {
+    salary_ += 0.13*salary_;
+  }
+};
+
+void GlobalRaiseEmployees(Employee* emp_arr_p[], int n) {
+  for (int i = 0; i < n; i++) {
+    emp_arr_p[i]->RaiseSalary();
+    std::cout << emp_arr_p[i]->salary_ << "\n"; 
+  }
+}
+
+int main() {
+  Employee* emp_arr_p[4]; // An array of pointers
+
+  Engineer engineer1(100);
+  Employee employee1(60);
+  Manager manager1(200);
+  Engineer engineer2(120);
+
+  emp_arr_p[0] = &engineer1;
+  emp_arr_p[1] = &employee1;
+  emp_arr_p[2] = &manager1;
+  emp_arr_p[3] = &engineer2;
+  
+  GlobalRaiseEmployees(emp_arr_p, 4);
+}
 
